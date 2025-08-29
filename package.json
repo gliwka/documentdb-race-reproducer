@@ -1,0 +1,30 @@
+{
+  "name": "documentdb-race-condition-tester",
+  "version": "1.0.0",
+  "description": "Reproducer for DocumentDB concurrent upsert race conditions",
+  "main": "src/index.ts",
+  "scripts": {
+    "test-mongodb": "tsx minimal.ts mongodb://localhost:27017/",
+    "test-documentdb": "tsx minimal.ts 'mongodb://alice:hunter2@localhost:10260/?tls=true&tlsAllowInvalidCertificates=true'",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "dependencies": {
+    "@types/node": "^20.10.0",
+    "mongodb": "^6.3.0",
+    "typescript": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.20.5"
+  },
+  "keywords": [
+    "mongodb",
+    "cosmosdb",
+    "race-condition",
+    "concurrent",
+    "upsert"
+  ],
+  "author": "",
+  "license": "MIT"
+}

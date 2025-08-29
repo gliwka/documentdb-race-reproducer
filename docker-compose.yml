@@ -1,0 +1,18 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongo-test
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: testdb
+    restart: unless-stopped
+  documentdb:
+    image: ghcr.io/microsoft/documentdb/documentdb-local:latest
+    container_name: documentdb-container
+    ports:
+      - "10260:10260"
+    restart: unless-stopped
+    command: ["--username", "alice", "--password", "hunter2"]
+volumes:
+  mongo_data:
