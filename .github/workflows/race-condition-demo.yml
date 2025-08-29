@@ -1,0 +1,54 @@
+name: DocumentDB Race Condition Demo
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  race-condition-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Start MongoDB and DocumentDB containers
+      run: docker compose up -d
+    
+    - name: Wait for containers to be ready
+      run: sleep 10
+    
+    - name: Test MongoDB (Expected 0% data loss)
+      run: |
+        echo "🧪 Testing MongoDB - Expected: 100% success rate"
+        npm run test-mongodb
+    
+    - name: Test DocumentDB (Expected 98% data loss)
+      run: |
+        echo "🧪 Testing DocumentDB - Expected: ~98% data loss rate"
+        npm run test-documentdb || true
+    
+    - name: Summary
+      run: |
+        echo "📊 Summary:"
+        echo "- MongoDB: Should show 0% data loss (all operations successful)"
+        echo "- DocumentDB: Should show ~98% data loss (race condition demonstrated)"
+        echo ""
+        echo "This demonstrates the race condition bug in DocumentDB/Cosmos DB for MongoDB vCore"
+        echo "where concurrent upsert operations on the same document cause data loss."
+    
+    - name: Cleanup
+      if: always()
+      run: docker compose down
